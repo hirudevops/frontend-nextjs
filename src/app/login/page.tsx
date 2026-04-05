@@ -7,7 +7,7 @@ import { useAuth } from "../../components/AuthProvider";
 export default function LoginPage() {
   const r = useRouter();
   const { doLogin, error } = useAuth();
-  const [email, setEmail] = useState("fe1@example.com");
+  const [email, setEmail] = useState("test1@example.com");
   const [password, setPassword] = useState("Password123!");
   const [busy, setBusy] = useState(false);
 
