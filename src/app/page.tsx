@@ -12,6 +12,13 @@ export default function Home() {
   const [productsError, setProductsError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user) {
+      setProducts([]);
+      setProductsLoading(false);
+      setProductsError(null);
+      return;
+    }
+
     let active = true;
     setProductsLoading(true);
     setProductsError(null);
@@ -33,7 +40,7 @@ export default function Home() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [user]);
 
   return (
     <main style={{ padding: 24 }}>
@@ -57,24 +64,26 @@ export default function Home() {
         </>
       )}
 
-      <section style={{ marginTop: 24 }}>
-        <h2>Catalog</h2>
-        {productsLoading ? (
-          <p>Loading products...</p>
-        ) : productsError ? (
-          <p style={{ color: "crimson" }}>{productsError}</p>
-        ) : products.length === 0 ? (
-          <p>No products found.</p>
-        ) : (
-          <ul>
-            {products.map((p) => (
-              <li key={p.id}>
-                <strong>{p.name}</strong> ({p.sku}) - {p.currency} {p.price_cents / 100}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {user ? (
+        <section style={{ marginTop: 24 }}>
+          <h2>Catalog</h2>
+          {productsLoading ? (
+            <p>Loading products...</p>
+          ) : productsError ? (
+            <p style={{ color: "crimson" }}>{productsError}</p>
+          ) : products.length === 0 ? (
+            <p>No products found.</p>
+          ) : (
+            <ul>
+              {products.map((p) => (
+                <li key={p.id}>
+                  <strong>{p.name}</strong> ({p.sku}) - {p.currency} {p.price_cents / 100}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ) : null}
     </main>
   );
 }
