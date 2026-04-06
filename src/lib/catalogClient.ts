@@ -21,5 +21,5 @@ export async function listProducts(limit = 20, offset = 0): Promise<CatalogListR
     limit: String(limit),
     offset: String(offset),
   });
-  return getJSON<CatalogListResponse>(`/api/catalog/products?${params.toString()}`);
+  return getJSON<CatalogListResponse>(`/catalog/products?${params.toString()}`);
 }
