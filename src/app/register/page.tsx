@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../components/AuthProvider";
+import { register } from "../../lib/authClient";
 
 export default function RegisterPage() {
   const r = useRouter();
-  const { doRegister, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <main style={{ padding: 24, maxWidth: 480 }}>
@@ -19,9 +19,13 @@ export default function RegisterPage() {
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
+          setError(null);
           try {
-            await doRegister(email, password);
-            r.push("/dashboard");
+            await register(email, password);
+            const qp = new URLSearchParams({ registered: "1", email });
+            r.push(`/login?${qp.toString()}`);
+          } catch (err: any) {
+            setError(err?.message ?? "Registration failed");
           } finally {
             setBusy(false);
           }
@@ -52,3 +56,4 @@ export default function RegisterPage() {
     </main>
   );
 }
+

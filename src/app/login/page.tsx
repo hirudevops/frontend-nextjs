@@ -1,15 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../components/AuthProvider";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<main style={{ padding: 24, maxWidth: 480 }}>Loading...</main>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const r = useRouter();
+  const params = useSearchParams();
   const { doLogin, error } = useAuth();
-  const [email, setEmail] = useState("test1@example.com");
-  const [password, setPassword] = useState("Password123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const displayError = error?.toLowerCase().includes("missing refresh token") ? null : error;
+
+  useEffect(() => {
+    const registered = params.get("registered");
+    const qpEmail = params.get("email");
+    if (registered === "1") {
+      setSuccessMsg("You are registered successfully. Please login.");
+    } else {
+      setSuccessMsg(null);
+    }
+    if (qpEmail) {
+      setEmail(qpEmail);
+    }
+    if (registered === "1") {
+      setPassword("");
+    }
+  }, [params]);
 
   return (
     <main style={{ padding: 24, maxWidth: 480 }}>
@@ -42,7 +69,8 @@ export default function LoginPage() {
           />
         </div>
 
-        {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
+        {successMsg ? <p style={{ color: "seagreen" }}>{successMsg}</p> : null}
+        {displayError ? <p style={{ color: "crimson" }}>{displayError}</p> : null}
 
         <button disabled={busy} type="submit">
           {busy ? "Logging in..." : "Login"}
@@ -51,3 +79,4 @@ export default function LoginPage() {
     </main>
   );
 }
+
