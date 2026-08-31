@@ -124,36 +124,33 @@ export default function CatalogPage() {
           </div>
         ) : user ? (
           <>
-            <section className="hero">
-              <div className="hero-card fade-up">
-                <div className="pill">Catalog</div>
-                <h1 className="hero-title">A sharper view of your catalog.</h1>
-                <p className="hero-sub">Filter the collection, scan stock levels, and find the next item to act on.</p>
-              </div>
+            <section className="catalog-heading fade-up">
+              <div><p className="page-eyebrow">CATALOG / ACTIVE PRODUCTS</p><h1>Every product, in focus.</h1><p>Filter the collection, scan stock levels, and find the next item to act on.</p></div>
+              <div className="catalog-count"><span>VISIBLE NOW</span><strong>{visibleProducts.length}</strong><small>products</small></div>
             </section>
 
-            <section className="fade-up" style={{ marginBottom: 18 }}>
-              <div className="pill" style={{ marginBottom: 10 }}>Categories</div>
-              <div className="cta-row" style={{ flexWrap: "wrap" }}>
+            <section className="catalog-toolbar fade-up">
+              <div><p>FILTER COLLECTION</p><div className="category-control">
                 <button
-                  className={selectedCategory === "all" ? "btn btn-primary" : "btn btn-ghost"}
+                  className={selectedCategory === "all" ? "category-active" : ""}
                   onClick={() => setSelectedCategory("all")}
                 >
-                  All
+                  All products
                 </button>
                 {categoryOptions.map((cat) => (
                   <button
-					key={cat.id}
-					className={selectedCategory === cat.id ? "btn btn-primary" : "btn btn-ghost"}
-					onClick={() => setSelectedCategory(cat.id)}
+                    key={cat.id}
+                    className={selectedCategory === cat.id ? "category-active" : ""}
+                    onClick={() => setSelectedCategory(cat.id)}
                   >
-					{cat.id === "uncategorized" ? "Uncategorized" : cat.label}
+                    {cat.id === "uncategorized" ? "Uncategorized" : cat.label}
                   </button>
                 ))}
-              </div>
+              </div></div>
+              <Link className="btn btn-ghost" href="/dashboard">Back to dashboard</Link>
             </section>
 
-            <section className="fade-up">
+            <section className="catalog-results fade-up">
               {productsLoading ? (
                 <div className="empty-state">Loading products...</div>
               ) : categoriesError ? (
@@ -169,13 +166,13 @@ export default function CatalogPage() {
               ) : (
                 <div className="catalog-grid">
                   {visibleProducts.map((p) => (
-                    <article key={p.id} className="product-card">
-                      <div className="product-thumb">{p.sku}</div>
+                    <article key={p.id} className="product-card modern-product-card">
+                      <div className="product-thumb"><span>{p.name.slice(0, 1)}</span><small>{p.sku}</small></div>
                       <div>
-                        <h3 style={{ margin: "0 0 6px" }}>{p.name}</h3>
+                        <h3>{p.name}</h3>
                         <div className="product-meta">
-                          <span>SKU {p.sku}</span>
-                          <span>Qty {p.qty}</span>
+                          <span>{p.category_id || "Uncategorized"}</span>
+                          <span className={p.qty < 5 ? "stock-low" : "stock-good"}>{p.qty} in stock</span>
                         </div>
                       </div>
                       <div className="product-meta">

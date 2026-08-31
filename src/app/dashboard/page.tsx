@@ -44,6 +44,7 @@ export default function DashboardPage() {
 
   const inventoryLow = products.filter((p) => p.qty < 5).length;
   const inventoryOk = products.filter((p) => p.qty >= 5).length;
+  const inventoryCoverage = products.length ? Math.round((inventoryOk / products.length) * 100) : 0;
 
   const authMessage = error?.toLowerCase().includes("missing refresh token")
     ? "Please login. If you are not registered please register."
@@ -77,49 +78,28 @@ export default function DashboardPage() {
           </div>
         ) : user ? (
           <>
-            <section className="hero">
-              <div className="hero-card fade-up">
-                <div className="pill">Welcome back</div>
-                <h1 className="hero-title">Your storefront is live.</h1>
-                <p className="hero-sub">
-                  Keep products moving, spot stock risk early, and make the next operational decision with confidence.
-                </p>
+            <section className="workspace-heading fade-up">
+              <div><p className="page-eyebrow">DASHBOARD / TODAY</p><h1>Keep the operation moving.</h1><p>Monitor inventory signals and shift attention where it makes the biggest difference.</p></div>
+              <div className="workspace-actions">
                 <div className="cta-row">
-                  <button className="btn btn-primary" onClick={() => refreshMe()}>
-                    Sync account
-                  </button>
-                  <button className="btn btn-ghost" onClick={() => doLogout()}>
-                    Sign out
-                  </button>
+                  <button className="btn btn-primary" onClick={() => refreshMe()}>Sync account</button>
+                  <Link className="btn btn-ghost" href="/catalog">View catalog</Link>
                 </div>
-              </div>
-              <div className="hero-card fade-up">
-                <h2 className="section-title" style={{ marginTop: 0 }}>
-                  Inventory pulse
-                </h2>
-                <div className="stats-grid">
-                  <div className="stat-card">
-                    <p className="stat-title">Tracked products</p>
-                    <p className="stat-value">{products.length}</p>
-                  </div>
-                  <div className="stat-card">
-                    <p className="stat-title">Needs attention</p>
-                    <p className="stat-value">{inventoryLow}</p>
-                  </div>
-                  <div className="stat-card">
-                    <p className="stat-title">In stock</p>
-                    <p className="stat-value">{inventoryOk}</p>
-                  </div>
-                </div>
+                <button className="text-button dark-text-button" onClick={() => doLogout()}>Sign out</button>
               </div>
             </section>
-            {productsLoading ? (
-              <div className="empty-state">Loading products...</div>
-            ) : productsError ? (
-              <div className="empty-state" style={{ color: "crimson" }}>
-                {productsError}
+            <section className="metric-strip fade-up" aria-label="Inventory metrics">
+              <div><span>Tracked products</span><strong>{products.length}</strong><small>In active view</small></div>
+              <div><span>Needs attention</span><strong>{inventoryLow}</strong><small>Below quantity threshold</small></div>
+              <div><span>In stock</span><strong>{inventoryOk}</strong><small>Ready to fulfil</small></div>
+              <div className="coverage-metric"><span>Stock coverage</span><strong>{inventoryCoverage}%</strong><div><i style={{ width: `${inventoryCoverage}%` }} /></div></div>
+            </section>
+            <section className="dashboard-grid fade-up">
+              <div className="watchlist-panel"><div className="panel-heading"><div><p>INVENTORY WATCHLIST</p><h2>What needs a closer look</h2></div><Link href="/catalog">See all →</Link></div>
+                {productsLoading ? <p className="panel-empty">Updating catalog signals...</p> : productsError ? <p className="panel-empty panel-error">{productsError}</p> : products.length === 0 ? <p className="panel-empty">No products are available yet.</p> : <div className="watchlist">{products.slice(0, 4).map((product) => <div key={product.id}><span className="product-initial">{product.name.slice(0, 1)}</span><p><strong>{product.name}</strong><small>{product.sku}</small></p><b className={product.qty < 5 ? "stock-low" : "stock-good"}>{product.qty} units</b></div>)}</div>}
               </div>
-            ) : null}
+              <aside className="focus-panel"><p>FOCUS MODE</p><h2>{inventoryLow ? `${inventoryLow} products need attention.` : "Inventory is in good shape."}</h2><span>{inventoryLow ? "Open the catalog to review low-stock products before your next fulfilment cycle." : "All tracked products meet the current inventory threshold."}</span><Link className="btn btn-primary" href="/catalog">Review catalog</Link></aside>
+            </section>
           </>
         ) : (
           <section className="hero">
