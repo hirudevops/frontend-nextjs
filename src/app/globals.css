@@ -213,6 +213,13 @@ a {
   margin: 8px 0 0;
 }
 
+.login-success {
+  color: #14634a;
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 8px 0 0;
+}
+
 .login-submit {
   background: #e07a2d;
   border: 0;
