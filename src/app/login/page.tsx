@@ -42,14 +42,14 @@ function LoginForm() {
 
   return (
     <main className="login-page">
-      <section className="login-showcase" aria-label="LuxeCart Studio">
+      <section className="login-showcase" aria-label="TechPilot Studio">
         <Link className="login-brand" href="/">
-          LUXECART<span>STUDIO</span>
+          TECHPILOT<span>STUDIO</span>
         </Link>
         <div className="login-copy">
           <p className="login-kicker">CURATED COMMERCE</p>
           <h1>Enter your store&apos;s better dimension.</h1>
-          <p>Track the collection, understand inventory, and keep the next move in reach.</p>
+          <p>Monitor operations, understand inventory, and keep every next move in reach.</p>
         </div>
         <LoginScene />
         <p className="login-scene-caption">Move your cursor across the collection.</p>
@@ -59,7 +59,7 @@ function LoginForm() {
         <div className="login-form-wrap">
           <p className="login-eyebrow">WELCOME BACK</p>
           <h2 id="login-heading">Sign in</h2>
-          <p className="login-intro">Use your LuxeCart account to continue.</p>
+          <p className="login-intro">Use your TechPilot account to continue.</p>
 
           <form
             className="login-form"
@@ -104,7 +104,7 @@ function LoginForm() {
           </form>
 
           <p className="login-register">
-            New to LuxeCart? <Link href="/register">Create an account</Link>
+            New to TechPilot? <Link href="/register">Create an account</Link>
           </p>
         </div>
       </section>

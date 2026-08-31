@@ -54,8 +54,8 @@ export default function DashboardPage() {
       <div className="container">
         <header className="topbar fade-up">
           <div className="brand">
-            <span className="brand-badge">EC</span>
-            LuxeCart Studio
+            <span className="brand-badge">TP</span>
+            TechPilot Studio
           </div>
           <nav className="nav-links">
             <Link href="/register">Register</Link>
@@ -82,7 +82,7 @@ export default function DashboardPage() {
                 <div className="pill">Welcome back</div>
                 <h1 className="hero-title">Your storefront is live.</h1>
                 <p className="hero-sub">
-                  Curate products, keep inventory healthy, and launch new drops for your shoppers.
+                  Keep products moving, spot stock risk early, and make the next operational decision with confidence.
                 </p>
                 <div className="cta-row">
                   <button className="btn btn-primary" onClick={() => refreshMe()}>
@@ -95,15 +95,15 @@ export default function DashboardPage() {
               </div>
               <div className="hero-card fade-up">
                 <h2 className="section-title" style={{ marginTop: 0 }}>
-                  Store pulse
+                  Inventory pulse
                 </h2>
                 <div className="stats-grid">
                   <div className="stat-card">
-                    <p className="stat-title">Catalog items</p>
+                    <p className="stat-title">Tracked products</p>
                     <p className="stat-value">{products.length}</p>
                   </div>
                   <div className="stat-card">
-                    <p className="stat-title">Low stock</p>
+                    <p className="stat-title">Needs attention</p>
                     <p className="stat-value">{inventoryLow}</p>
                   </div>
                   <div className="stat-card">

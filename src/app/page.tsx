@@ -15,8 +15,8 @@ export default function Home() {
       <div className="container">
         <header className="topbar fade-up">
           <div className="brand">
-            <span className="brand-badge">EC</span>
-            LuxeCart Studio
+            <span className="brand-badge">TP</span>
+            TechPilot Studio
           </div>
           <nav className="nav-links">
             <Link href="/register">Register</Link>
@@ -37,35 +37,36 @@ export default function Home() {
             </div>
           </div>
         ) : user ? (
-          <section className="hero">
-            <div className="hero-card fade-up">
-              <div className="pill">Welcome back</div>
-              <h1 className="hero-title">Your storefront is live.</h1>
-              <p className="hero-sub">
-                Curate products, keep inventory healthy, and launch new drops for your shoppers.
-              </p>
+          <section className="pilot-home fade-up">
+            <div className="pilot-home-copy">
+              <p className="page-eyebrow">OPERATIONAL OVERVIEW</p>
+              <h1>Good to see you back.</h1>
+              <p>Keep your store moving with a clear view of products, stock, and the work that matters today.</p>
               <div className="cta-row">
-                <button className="btn btn-primary" onClick={() => refreshMe()}>
-                  Sync account
-                </button>
-                <button className="btn btn-ghost" onClick={() => doLogout()}>
-                  Sign out
-                </button>
+                <Link className="btn btn-primary" href="/dashboard">Open dashboard</Link>
+                <Link className="btn btn-ghost" href="/catalog">Browse catalog</Link>
+              </div>
+            </div>
+            <div className="pilot-home-status">
+              <span>SESSION ACTIVE</span>
+              <strong>{user.email ?? user.id ?? "TechPilot operator"}</strong>
+              <div className="pilot-status-line"><i />Workspace synced</div>
+              <div className="cta-row">
+                <button className="btn btn-ghost" onClick={() => refreshMe()}>Refresh session</button>
+                <button className="text-button" onClick={() => doLogout()}>Sign out</button>
               </div>
             </div>
           </section>
         ) : (
-          <section className="hero">
-            <div className="hero-card fade-up">
-              <h1 className="hero-title">Please sign in</h1>
-              <p className="hero-sub">Login to see your catalog and manage products.</p>
-              <div className="cta-row">
-                <Link className="btn btn-primary" href="/login">
-                  LOGIN
-                </Link>
-              </div>
-              <p style={{ color: "crimson", marginTop: 12 }}>{authMessage}</p>
+          <section className="pilot-home fade-up">
+            <div className="pilot-home-copy">
+              <p className="page-eyebrow">TECHPILOT STUDIO</p>
+              <h1>Your operational command center.</h1>
+              <p>One focused workspace for products, inventory, and the teams behind them.</p>
+              <div className="cta-row"><Link className="btn btn-primary" href="/login">Sign in</Link><Link className="btn btn-ghost" href="/register">Create account</Link></div>
+              <p className="inline-error">{authMessage}</p>
             </div>
+            <div className="pilot-home-status pilot-grid-art" aria-hidden="true"><span>LIVE SIGNAL</span><strong>Make every decision visible.</strong><div className="pilot-art-ring" /></div>
           </section>
         )}
       </div>

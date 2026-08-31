@@ -101,8 +101,8 @@ export default function CatalogPage() {
       <div className="container">
         <header className="topbar fade-up">
           <div className="brand">
-            <span className="brand-badge">EC</span>
-            LuxeCart Studio
+            <span className="brand-badge">TP</span>
+            TechPilot Studio
           </div>
           <nav className="nav-links">
             <Link href="/register">Register</Link>
@@ -127,8 +127,8 @@ export default function CatalogPage() {
             <section className="hero">
               <div className="hero-card fade-up">
                 <div className="pill">Catalog</div>
-                <h1 className="hero-title">Catalog highlights</h1>
-                <p className="hero-sub">Browse your latest products and inventory.</p>
+                <h1 className="hero-title">A sharper view of your catalog.</h1>
+                <p className="hero-sub">Filter the collection, scan stock levels, and find the next item to act on.</p>
               </div>
             </section>
 
