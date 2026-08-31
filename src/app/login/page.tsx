@@ -1,17 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../components/AuthProvider";
 import LoginScene from "../../components/LoginScene";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<main style={{ padding: 24, maxWidth: 480 }}>Loading...</main>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const r = useRouter();
+  const params = useSearchParams();
   const { doLogin, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const displayError = error?.toLowerCase().includes("missing refresh token") ? null : error;
+
+  useEffect(() => {
+    const registered = params.get("registered");
+    const qpEmail = params.get("email");
+    if (registered === "1") {
+      setSuccessMsg("You are registered successfully. Please login.");
+    } else {
+      setSuccessMsg(null);
+    }
+    if (qpEmail) {
+      setEmail(qpEmail);
+    }
+    if (registered === "1") {
+      setPassword("");
+    }
+  }, [params]);
 
   return (
     <main className="login-page">
@@ -68,7 +95,8 @@ export default function LoginPage() {
               value={password}
             />
 
-            {error ? <p className="login-error" role="alert">{error}</p> : null}
+            {successMsg ? <p className="login-success" role="status">{successMsg}</p> : null}
+            {displayError ? <p className="login-error" role="alert">{displayError}</p> : null}
 
             <button className="login-submit" disabled={busy} type="submit">
               {busy ? "Signing in..." : "Sign in"}

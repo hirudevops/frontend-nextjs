@@ -12,30 +12,30 @@ export default function DashboardPage() {
   const [productsLoading, setProductsLoading] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      setProducts([]);
-      setProductsLoading(false);
-      setProductsError(null);
-      return;
-    }
+    if (!user) return;
 
     let active = true;
-    setProductsLoading(true);
-    setProductsError(null);
+    const loadProducts = async () => {
+      await Promise.resolve();
+      if (!active) return;
 
-    listProducts(12, 0)
-      .then((res) => {
+      setProductsLoading(true);
+      setProductsError(null);
+
+      try {
+        const res = await listProducts(12, 0);
         if (!active) return;
         setProducts(res.items ?? []);
-      })
-      .catch((err: unknown) => {
+      } catch (err: unknown) {
         if (!active) return;
         setProductsError(err instanceof Error ? err.message : "Failed to load catalog");
-      })
-      .finally(() => {
+      } finally {
         if (!active) return;
         setProductsLoading(false);
-      });
+      }
+    };
+
+    void loadProducts();
 
     return () => {
       active = false;
@@ -45,17 +45,9 @@ export default function DashboardPage() {
   const inventoryLow = products.filter((p) => p.qty < 5).length;
   const inventoryOk = products.filter((p) => p.qty >= 5).length;
 
-  const formatMoney = (value: number, currency: string) => {
-    try {
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency,
-        maximumFractionDigits: 2,
-      }).format(value);
-    } catch {
-      return `${currency} ${value.toFixed(2)}`;
-    }
-  };
+  const authMessage = error?.toLowerCase().includes("missing refresh token")
+    ? "Please login. If you are not registered please register."
+    : error ?? "Please login. If you are not registered please register.";
 
   return (
     <div className="page-shell">
@@ -66,9 +58,10 @@ export default function DashboardPage() {
             LuxeCart Studio
           </div>
           <nav className="nav-links">
+            <Link href="/register">Register</Link>
             <Link href="/">Home</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <a href="#catalog">Catalog</a>
+            <Link href="/catalog">Catalog</Link>
           </nav>
           {user ? (
             <div className="pill">Signed in: {user.email ?? user.id ?? "user"}</div>
@@ -120,40 +113,13 @@ export default function DashboardPage() {
                 </div>
               </div>
             </section>
-
-            <section id="catalog" className="fade-up">
-              <h2 className="section-title">Catalog highlights</h2>
-              {productsLoading ? (
-                <div className="empty-state">Loading products...</div>
-              ) : productsError ? (
-                <div className="empty-state" style={{ color: "crimson" }}>
-                  {productsError}
-                </div>
-              ) : products.length === 0 ? (
-                <div className="empty-state">No products found.</div>
-              ) : (
-                <div className="catalog-grid">
-                  {products.map((p) => (
-                    <article key={p.id} className="product-card">
-                      <div className="product-thumb">{p.sku}</div>
-                      <div>
-                        <h3 style={{ margin: "0 0 6px" }}>{p.name}</h3>
-                        <div className="product-meta">
-                          <span>SKU {p.sku}</span>
-                          <span>Qty {p.qty}</span>
-                        </div>
-                      </div>
-                      <div className="product-meta">
-                        <span className="price-tag">
-                          {formatMoney(p.price_cents / 100, p.currency)}
-                        </span>
-                        <span>{p.currency}</span>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </section>
+            {productsLoading ? (
+              <div className="empty-state">Loading products...</div>
+            ) : productsError ? (
+              <div className="empty-state" style={{ color: "crimson" }}>
+                {productsError}
+              </div>
+            ) : null}
           </>
         ) : (
           <section className="hero">
@@ -165,7 +131,7 @@ export default function DashboardPage() {
                   Go to login
                 </Link>
               </div>
-              <p style={{ color: "crimson", marginTop: 12 }}>{error ?? "Not logged in"}</p>
+              <p style={{ color: "crimson", marginTop: 12 }}>{authMessage}</p>
             </div>
           </section>
         )}

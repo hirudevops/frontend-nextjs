@@ -1,6 +1,7 @@
 import { getJSON, postJSON } from "./api";
 
 export type AccessTokenResponse = { access_token: string };
+export type AuthUser = { email?: string; id?: string };
 
 export async function register(email: string, password: string): Promise<string> {
   const r = await postJSON<AccessTokenResponse>("/auth/register", { email, password });
@@ -17,8 +18,8 @@ export async function refresh(): Promise<string> {
   return r.access_token;
 }
 
-export async function me(accessToken: string): Promise<any> {
-  return getJSON<any>("/auth/me", accessToken);
+export async function me(accessToken: string): Promise<AuthUser> {
+  return getJSON<AuthUser>("/auth/me", accessToken);
 }
 
 export async function logout(accessToken?: string): Promise<void> {
