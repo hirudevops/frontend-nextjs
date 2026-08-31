@@ -6,7 +6,7 @@ import { useAuth } from "../../components/AuthProvider";
 import { listProducts, type CatalogProduct } from "../../lib/catalogClient";
 
 export default function DashboardPage() {
-  const { user, loading, error, doLogout, refreshMe } = useAuth();
+  const { user, loading, doLogout, refreshMe } = useAuth();
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [productsError, setProductsError] = useState<string | null>(null);
   const [productsLoading, setProductsLoading] = useState(false);
@@ -45,10 +45,6 @@ export default function DashboardPage() {
   const inventoryLow = products.filter((p) => p.qty < 5).length;
   const inventoryOk = products.filter((p) => p.qty >= 5).length;
   const inventoryCoverage = products.length ? Math.round((inventoryOk / products.length) * 100) : 0;
-
-  const authMessage = error?.toLowerCase().includes("missing refresh token")
-    ? "Please login. If you are not registered please register."
-    : error ?? "Please login. If you are not registered please register.";
 
   return (
     <div className="page-shell">
@@ -102,16 +98,21 @@ export default function DashboardPage() {
             </section>
           </>
         ) : (
-          <section className="hero">
-            <div className="hero-card fade-up">
-              <h1 className="hero-title">Please sign in</h1>
-              <p className="hero-sub">Login to see your catalog and manage products.</p>
+          <section className="dashboard-access fade-up">
+            <div className="dashboard-access-copy">
+              <p className="page-eyebrow">RESTRICTED WORKSPACE</p>
+              <h1>Operations start with a clear signal.</h1>
+              <p>Sign in to view live inventory, product health, and the daily work that needs your attention.</p>
               <div className="cta-row">
-                <Link className="btn btn-primary" href="/login">
-                  Go to login
-                </Link>
+                <Link className="btn btn-primary" href="/login">Sign in to dashboard</Link>
+                <Link className="btn btn-ghost" href="/register">Create account</Link>
               </div>
-              <p style={{ color: "crimson", marginTop: 12 }}>{authMessage}</p>
+            </div>
+            <div className="dashboard-access-preview" aria-hidden="true">
+              <div className="access-preview-head"><span>TECHPILOT / DASHBOARD</span><b>LOCKED</b></div>
+              <div className="access-preview-metrics"><div><span>PRODUCTS</span><i /></div><div><span>STOCK HEALTH</span><i /></div><div><span>PRIORITIES</span><i /></div></div>
+              <div className="access-preview-chart"><span /><span /><span /><span /><span /><span /><span /></div>
+              <p><i />Sign in to unlock live signals</p>
             </div>
           </section>
         )}
