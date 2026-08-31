@@ -1,89 +1,74 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useAuth } from "../components/AuthProvider";
-import { listProducts, type CatalogProduct } from "../lib/catalogClient";
 
 export default function Home() {
-  const { user, loading, doLogout } = useAuth();
-  const [products, setProducts] = useState<CatalogProduct[]>([]);
-  const [productsLoading, setProductsLoading] = useState(false);
-  const [productsError, setProductsError] = useState<string | null>(null);
+  const { user, loading, error, doLogout, refreshMe } = useAuth();
 
-  useEffect(() => {
-    if (!user) {
-      setProducts([]);
-      setProductsLoading(false);
-      setProductsError(null);
-      return;
-    }
-
-    let active = true;
-    setProductsLoading(true);
-    setProductsError(null);
-
-    listProducts(12, 0)
-      .then((res) => {
-        if (!active) return;
-        setProducts(res.items ?? []);
-      })
-      .catch((err: unknown) => {
-        if (!active) return;
-        setProductsError(err instanceof Error ? err.message : "Failed to load catalog");
-      })
-      .finally(() => {
-        if (!active) return;
-        setProductsLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [user]);
+  const authMessage = error?.toLowerCase().includes("missing refresh token")
+    ? "Please login. If you are not registered please register."
+    : error ?? "Please login. If you are not registered please register.";
 
   return (
-    <main style={{ padding: 24 }}>
-      <h1>eCommerce Frontend</h1>
+    <div className="page-shell">
+      <div className="container">
+        <header className="topbar fade-up">
+          <div className="brand">
+            <span className="brand-badge">EC</span>
+            LuxeCart Studio
+          </div>
+          <nav className="nav-links">
+            <Link href="/register">Register</Link>
+            <Link href="/">Home</Link>
+            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/catalog">Catalog</Link>
+          </nav>
+          {user ? (
+            <div className="pill">Signed in: {user.email ?? user.id ?? "user"}</div>
+          ) : null}
+        </header>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : user ? (
-        <>
-          <p>Logged in as: {user.email ?? user.id ?? "user"}</p>
-          <p>
-            <Link href="/dashboard">Go to dashboard</Link>
-          </p>
-          <button onClick={() => doLogout()}>Logout</button>
-        </>
-      ) : (
-        <>
-          <p>
-            <Link href="/login">Login</Link> | <Link href="/register">Register</Link>
-          </p>
-        </>
-      )}
-
-      {user ? (
-        <section style={{ marginTop: 24 }}>
-          <h2>Catalog</h2>
-          {productsLoading ? (
-            <p>Loading products...</p>
-          ) : productsError ? (
-            <p style={{ color: "crimson" }}>{productsError}</p>
-          ) : products.length === 0 ? (
-            <p>No products found.</p>
-          ) : (
-            <ul>
-              {products.map((p) => (
-                <li key={p.id}>
-                  <strong>{p.name}</strong> ({p.sku}) - {p.currency} {p.price_cents / 100}
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      ) : null}
-    </main>
+        {loading ? (
+          <div className="hero">
+            <div className="hero-card fade-up">
+              <h1 className="hero-title">Loading your storefront...</h1>
+              <p className="hero-sub">Fetching your latest account details.</p>
+            </div>
+          </div>
+        ) : user ? (
+          <section className="hero">
+            <div className="hero-card fade-up">
+              <div className="pill">Welcome back</div>
+              <h1 className="hero-title">Your storefront is live.</h1>
+              <p className="hero-sub">
+                Curate products, keep inventory healthy, and launch new drops for your shoppers.
+              </p>
+              <div className="cta-row">
+                <button className="btn btn-primary" onClick={() => refreshMe()}>
+                  Sync account
+                </button>
+                <button className="btn btn-ghost" onClick={() => doLogout()}>
+                  Sign out
+                </button>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="hero">
+            <div className="hero-card fade-up">
+              <h1 className="hero-title">Please sign in</h1>
+              <p className="hero-sub">Login to see your catalog and manage products.</p>
+              <div className="cta-row">
+                <Link className="btn btn-primary" href="/login">
+                  LOGIN
+                </Link>
+              </div>
+              <p style={{ color: "crimson", marginTop: 12 }}>{authMessage}</p>
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
   );
 }

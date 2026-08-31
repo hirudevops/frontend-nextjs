@@ -1,11 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import * as auth from "@/lib/authClient";
+import type { AuthUser } from "@/lib/authClient";
 
 type AuthState = {
   accessToken: string | null;
-  user: any | null;
+  user: AuthUser | null;
   loading: boolean;
   error: string | null;
   doLogin: (email: string, password: string) => Promise<void>;
@@ -18,7 +19,7 @@ const Ctx = createContext<AuthState | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,11 +47,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (async () => {
       try {
         await refreshMe();
-      } catch (e: any) {
+      } catch (error: unknown) {
         // Not logged in is OK
         setUser(null);
         setAccessToken(null);
-        setError(e?.message ?? "not authenticated");
+        setError(error instanceof Error ? error.message : "not authenticated");
       } finally {
         setLoading(false);
       }
@@ -85,10 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const value = useMemo<AuthState>(
-    () => ({ accessToken, user, loading, error, doLogin, doRegister, doLogout, refreshMe }),
-    [accessToken, user, loading, error]
-  );
+  const value: AuthState = { accessToken, user, loading, error, doLogin, doRegister, doLogout, refreshMe };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
